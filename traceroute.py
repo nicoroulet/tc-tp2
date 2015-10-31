@@ -1,11 +1,4 @@
-import logging
-
-logging.getLogger('scapy.runtime').setLevel(logging.ERROR)
-
-from sys import argv
 from scapy.all import sr, IP, ICMP
-
-TIMEOUT = 5
 
 def traceroute(dst, max = 30):
 	hops = []
@@ -19,10 +12,3 @@ def traceroute(dst, max = 30):
 		else:
 			hops.append(None)
 	return hops
-
-for i, hop in enumerate(traceroute(argv[1])):
-	ttl = i + 1
-	if not hop:
-		print ttl, '\t', '*'
-	else:
-		print ttl, '\t', hop['ip'], '\t', hop['rtt']
