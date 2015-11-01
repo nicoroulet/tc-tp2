@@ -9,19 +9,23 @@ from curses import *
 from time import sleep
 from threading import Thread
 
-SCR_DATA_START_ROW = 2
-SCR_MSG_ROW = 1
-tracing_message = 'Tracing ' + argv[1]
+SCR_MSG_ROW = 2
+SCR_DATA_START_ROW = SCR_MSG_ROW + 1
+tracing_message = 'Tracing'
 
 scr = initscr()
 curs_set(0)
-scr.addstr(0, 0, "LE MONITOR."); scr.refresh()
+scr.addstr(0, 0, "LE MONITOR.")
+scr.addstr(1, 0, "Route trace to IP " + argv[1])
+scr.refresh()
 
 def print_tracing_message(y, x):
 	scr.addstr(y, x, tracing_message)
 	dots_x_pos = x + len(tracing_message)
 	while True:
+		sleep(1)
 		scr.addstr(y, dots_x_pos, ' '*3)
+		scr.refresh()
 		for i in range(0,3):
 			sleep(1)
 			scr.addstr(y, dots_x_pos + i, '.'); scr.refresh()
