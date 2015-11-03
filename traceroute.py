@@ -8,7 +8,7 @@ example_ip = '181.15.96.29'
 def trace(dst = example_ip):
 	hops = []
 	for ttl in range(1, MAX_HOPS):
-		ans, unans = sr(IP(dst = dst, ttl = ttl) / ICMP(), timeout = TIMEOUT, verbose = False)
+		ans, unans = sr(IP(dst = dst, ttl = ttl) / ICMP(), timeout = TIMEOUT, verbose = False, chainCC = True)
 		if ans:
 			snt, rcv = ans[0]
 			hops.append({'ip' : rcv.src, 'rtt' : rcv.time - snt.sent_time})
