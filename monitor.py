@@ -1,10 +1,6 @@
-import logging
-logging.getLogger('scapy.runtime').setLevel(logging.ERROR)
-
 from traceroute import trace
 
 from sys import argv
-from scapy.all import sr, IP, ICMP
 from curses import *
 from time import sleep
 from threading import Thread
