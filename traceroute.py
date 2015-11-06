@@ -20,9 +20,23 @@ def trace(dst = example_ip):
 
 	for snt, rcv in ans:
 		hops[snt.ttl - 1] = {'ip' : rcv.src, 'rtt' : rcv.time - snt.sent_time}
+
 		if rcv.type == 0:
 			final = min(final, snt.ttl)
 
 	del hops[final:]
 
 	return hops
+
+if __name__ == "__main__":
+	from common import dst, write_trace
+
+	hops = trace(dst)
+
+	for i, hop in enumerate(hops):
+		ttl = i + 1
+
+		if not hop:
+			print(str(ttl) + '\t' + '*')
+		else:
+			print(str(ttl) + '\t' + str(hop['ip']) + '\t' + str(hop['rtt']))
