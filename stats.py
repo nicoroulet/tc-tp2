@@ -10,7 +10,7 @@ from numpy import mean, std
 # Devuelve una lista de estadisticas de cada hop
 # Cada estadistica es un diccionario {rtt_m, rtt_sd, d_rtt_m, d_rtt_sd}
 def statistics(log):
-	stats = [ {'rtt_m': mean([y['rtt'] for y in x]), 'rtt_sd': std([y['rtt'] for y in x]), 'd_rtt_m': mean([y['d_rtt'] for y in x if 'd_rtt' in y]), 'd_rtt_sd': std([y['d_rtt'] for y in x if 'd_rtt' in y]) } for x in log if len(x)>0 ] # plz don't kill me
+	stats = [ {'n': len(x), 'rtt_m': mean([y['rtt'] for y in x]), 'rtt_sd': std([y['rtt'] for y in x]), 'd_rtt_m': mean([y['d_rtt'] for y in x if 'd_rtt' in y]), 'd_rtt_sd': std([y['d_rtt'] for y in x if 'd_rtt' in y]) } for x in log if len(x)>0 ] # plz don't kill me
 	return stats
 
 SCR_START_POS = 2
@@ -25,7 +25,7 @@ try:
 	while True:
 		scr.clear()
 		scr.addstr(0, 0, "LE MONITOR.")
-		scr.addstr(SCR_START_POS, 0, "TTL \t RTT mean \t RTT stdev \t D_RTT mean \t D_RTT stdev")
+		scr.addstr(SCR_START_POS, 0, "TTL \t RTT mean \t RTT stdev \t D_RTT mean \t D_RTT stdev \t n")
 		if len(argv) > 1:
 			output = trace(argv[1])
 		else:
@@ -44,9 +44,10 @@ try:
 		for i, stat in enumerate(stats):
 			row = i + SCR_START_POS + 1
 			ttl = i + 1
-			scr.addstr(row, 0, str(ttl) + '\t' + "%.8f" %(stat['rtt_m']) + '\t' + "%.8f" %(stat['rtt_sd']) + '\t' + "%.8f" %(stat['d_rtt_m']) + '\t' + "%.8f" %(stat['d_rtt_sd']) )
+			scr.addstr(row, 0, str(ttl) + '\t' + "%.8f" %(stat['rtt_m']) + '\t' + "%.8f" %(stat['rtt_sd']) + '\t' + "%.8f" %(stat['d_rtt_m']) + '\t' + "%.8f" %(stat['d_rtt_sd']) + '\t' + str(stat['n']) )
 		scr.refresh()
 except KeyboardInterrupt:
 	endwin()
+	print "TTL \t RTT mean \t RTT stdev \t D_RTT mean \t D_RTT stdev \t n"
 	for i, stat in enumerate(stats):
-		print str(i+1) + '\t' + "%.8f" %(stat['rtt_m']) + '\t' + "%.8f" %(stat['rtt_sd']) + '\t' + "%.8f" %(stat['d_rtt_m']) + '\t' + "%.8f" %(stat['d_rtt_sd'])
+		print ( str(i+1) + '\t' + "%.8f" %(stat['rtt_m']) + '\t' + "%.8f" %(stat['rtt_sd']) + '\t' + "%.8f" %(stat['d_rtt_m']) + '\t' + "%.8f" %(stat['d_rtt_sd']) + '\t' + "%d" %(stat['n']) )
