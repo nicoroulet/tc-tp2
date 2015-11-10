@@ -36,5 +36,3 @@ if __name__ == "__main__":
 		return [hop and hop.values() or ['*'] for hop in hops], None
 
 	monitor(None, trace_display, None)
-
-# vim: noet ts=4

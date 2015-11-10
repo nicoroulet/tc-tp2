@@ -72,4 +72,3 @@ def monitor(header, step, start_state):
 		curses.endwin()
 
 	return state
-# vim: noet ts=4

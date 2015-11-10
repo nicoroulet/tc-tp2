@@ -60,5 +60,3 @@ if __name__ == "__main__":
  	for i, stat in enumerate(stats):
 		if stat:
 			print str(i+1) + '\t' + "%.8f" %(stat['rtt_m']) + '\t' + "%.8f" %(stat['rtt_sd']) + '\t' + "%.8f" %(stat['d_rtt_m']) + '\t' + "%.8f" %(stat['d_rtt_sd'])
-
-# vim: noet ts=4
