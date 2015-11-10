@@ -1,15 +1,13 @@
 import logging
 logging.getLogger('scapy.runtime').setLevel(logging.ERROR)
 
-from scapy.all import sr, IP, ICMP
+from scapy.all import sr, IP, ICMP, Net
 from random import random
 
 TIMEOUT = 5
 MAX_HOPS = 30
 
-example_ip = '181.15.96.29'
-
-def trace(dst = example_ip):
+def trace(dst):
 	id = int(random() * 0xFFFF)
 	pkts = [IP(dst = dst, ttl = i) / ICMP(id = id, seq = i) for i in range(1, MAX_HOPS)]
 
@@ -29,14 +27,14 @@ def trace(dst = example_ip):
 	return hops
 
 if __name__ == "__main__":
-	from common import dst, write_trace
+	from monitor import monitor 
+	from common import dst
 
-	hops = trace(dst)
+	def trace_display(_):
+		hops = trace(dst)
 
-	for i, hop in enumerate(hops):
-		ttl = i + 1
+		return [hop and hop.values() or ['*'] for hop in hops], None
 
-		if not hop:
-			print(str(ttl) + '\t' + '*')
-		else:
-			print(str(ttl) + '\t' + str(hop['ip']) + '\t' + str(hop['rtt']))
+	monitor(None, trace_display, None)
+
+# vim: noet ts=4
