@@ -1,5 +1,7 @@
 from traceroute import trace
 from numpy import mean, std
+from scipy.stats.mstats import normaltest
+from math import isnan
 
 header = ['ip', 'rtt_m', 'rtt_sd', 'd_rtt_m', 'd_rtt_sd', 'n']
 
@@ -57,6 +59,10 @@ if __name__ == "__main__":
 	log = monitor(header, update_stats, [])
 
 	stats = statistics(log)
+
  	for i, stat in enumerate(stats):
 		if stat:
 			print str(i+1) + '\t' + "%.8f" %(stat['rtt_m']) + '\t' + "%.8f" %(stat['rtt_sd']) + '\t' + "%.8f" %(stat['d_rtt_m']) + '\t' + "%.8f" %(stat['d_rtt_sd'])
+
+	nt = normaltest([x['d_rtt'] for hop in log for x in hop if x and 'd_rtt' in x])
+	print("normaltest con p-value {}".format(nt[1]))
