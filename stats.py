@@ -1,8 +1,8 @@
 from traceroute import trace
 from numpy import mean, std
-from scipy.stats.mstats import normaltest
 from math import isnan
 import matplotlib.pyplot as plt
+from common import dump
 
 header = ['ip', 'rtt_m', 'rtt_std', 'd_rtt_m', 'n']
 
@@ -47,12 +47,6 @@ def hist(log):
 	plt.hist(log, 20)
 	plt.show()
 
-def dump(log):
-	f = open('{}.trace'.format(dst.repr), 'w')
-	for i, hops in enumerate(log):
-		for hop in hops:
-			f.write('\t'.join(str(x) for x in [i+1, hop['ip'], hop['rtt']]) + '\n')
-
 if __name__ == "__main__":
 	from monitor import monitor 
 	from common import dst
@@ -72,20 +66,5 @@ if __name__ == "__main__":
 	log = monitor(header, update_stats, [])
 
 	dump(log)
-	
-	stats = statistics(log)
-	
- 	for i, stat in enumerate(stats):
-		if stat:
-			print "%d \t %.8f \t %.8f \t %s \t %d " %(i+1, stat['rtt_m'], stat['rtt_std'], str(stat['d_rtt_m']) if 'd_rtt_m' in stat else "*" , stat['n'])
-			
-	samples = [ stat['d_rtt_m'] for stat in stats if stat and 'd_rtt_m' in stat and stat['d_rtt_m'] != '*' and stat['d_rtt_m'] > 0 ]
-	# print samples
-	# m = mean(samples)
-	# s = std(samples)
-	# samples = [ ((x-m) / s) for x in samples ]
-	hist(samples)
-	nt = normaltest( samples )
-	
-	
-	print("normaltest con p-value {}".format(nt[1]))
+
+	# hist(samples)
