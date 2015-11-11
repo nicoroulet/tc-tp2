@@ -40,6 +40,12 @@ def hist(log):
 	plt.hist(log, 100)
 	plt.show()
 
+def dump(log):
+	f = open('{}.trace'.format(dst.repr), 'w')
+	for i, hops in enumerate(log):
+		for hop in hops:
+			f.write('\t'.join(str(x) for x in [i+1, hop['ip'], hop['rtt']]) + '\n')
+
 if __name__ == "__main__":
 	from monitor import monitor 
 	from common import dst
@@ -63,11 +69,8 @@ if __name__ == "__main__":
 
 	log = monitor(header, update_stats, [])
 
-	stats = statistics(log)
+	dump(log)
 
- 	for i, stat in enumerate(stats):
-		if stat:
-			print str(i+1) + '\t' + "%.8f" %(stat['rtt_m']) + '\t' + "%.8f" %(stat['rtt_sd']) + '\t' + "%.8f" %(stat['d_rtt_m']) + '\t' + "%.8f" %(stat['d_rtt_sd'])
 	samples = [x['d_rtt'] for hop in log for x in hop if x and 'd_rtt' in x]
 	hist(samples)
 	nt = normaltest(samples)
