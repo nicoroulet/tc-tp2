@@ -28,7 +28,7 @@ def most_common(l) :
 def statistics(log):
 	stats = []
 	for i, x in enumerate(log):
-		if x:
+		if len(x) > 0:
 			ip = most_common([ h['ip'] for h in x ])
 			rtts = [ y['rtt'] for y in x if y['ip'] == ip ]
 			rtt_m = mean(rtts)
@@ -40,18 +40,11 @@ def statistics(log):
 				stats[i]['d_rtt_m'] = rtt_m - stats[i-1]['rtt_m']
 		else:
 			stats.append(None)
-	# stats = [ {
-	# 	'n': len(x),
-	# 	'ip': most_common( [h['ip'] for h in x] ),
-	# 	'rtt_m': mean([y['rtt'] for y in x]),
-	# 	'rtt_sd': std([y['rtt'] for y in x]),
-	# 	'd_rtt_m': mean([y['d_rtt'] for y in x if 'd_rtt' in y]),
-	# 	'd_rtt_sd': std([y['d_rtt'] for y in x if 'd_rtt' in y])
-	# 	} if x else None for x in log ] # plz don't kill me
+
 	return stats
 
 def hist(log):
-	plt.hist(log, 100)
+	plt.hist(log, 20)
 	plt.show()
 
 def dump(log):
@@ -72,11 +65,6 @@ if __name__ == "__main__":
 				log.append([])
 			if hop:
 				log[i].append(hop)
-				if i == 0:
-					log[i][-1]['d_rtt'] = hop['rtt']
-				elif hops[i-1]:
-					log[i][-1]['d_rtt'] = max(0, hop['rtt'] - hops[i-1]['rtt'])
-
 		stats = statistics(log)
 
 		return [[s[key] for key in header] if s else ['*'] for s in stats], log
@@ -91,14 +79,13 @@ if __name__ == "__main__":
 		if stat:
 			print "%d \t %.8f \t %.8f \t %s \t %d " %(i+1, stat['rtt_m'], stat['rtt_std'], str(stat['d_rtt_m']) if 'd_rtt_m' in stat else "*" , stat['n'])
 			
-	samples = [ stat['d_rtt_m'] for stat in stats if stat and 'd_rtt_m' in stat ]
-	# samples = [x['d_rtt'] for hop in log for x in hop if x and 'd_rtt' in x]
-	hist([x['d_rtt'] for hop in log for x in hop if x and 'd_rtt' in x])
-	nt = normaltest([ x['d_rtt_m'] for x in stats if x ])
-	# nt = normaltest([x['d_rtt'] for hop in log for x in hop if x and 'd_rtt' in x])
+	samples = [ stat['d_rtt_m'] for stat in stats if stat and 'd_rtt_m' in stat and stat['d_rtt_m'] != '*' and stat['d_rtt_m'] > 0 ]
+	# print samples
+	# m = mean(samples)
+	# s = std(samples)
+	# samples = [ ((x-m) / s) for x in samples ]
+	hist(samples)
+	nt = normaltest( samples )
 	
 	
-	# samples = [x['d_rtt'] for hop in log for x in hop if x and 'd_rtt' in x]
-	# samples = [mean([x['d_rtt'] for x in hop if x and 'd_rtt' in x ]) for hop in log if len([ y for y in hop if ('d_rtt' in y)])>0 ]
-	# samples = [ (x-mean(samples) / std(samples)) for x in samples ]
 	print("normaltest con p-value {}".format(nt[1]))
