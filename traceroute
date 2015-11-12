@@ -1,0 +1,3 @@
+#!/bin/sh
+
+sudo python2 stats.py $1
