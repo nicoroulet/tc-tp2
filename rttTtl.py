@@ -1,9 +1,11 @@
 from pylab import *
 
+import sys
+
 t = []
 s=[]
 
-read_file = [x.strip().split() for x in open('RTT EEUU').readlines()]
+read_file = [x.strip().split() for x in open(sys.argv[1]).readlines()]
 
 s = [ [int(x[0]), float(x[2])] for x in read_file if len(x) > 2]
 
